@@ -11,14 +11,18 @@
 		Data Analysis from Scratch</font>
 		<br>
 		<br>
-		<font face="monospace" size="5" color="#BABDB6">
+		<font face="monospace" size="3" color="#BABDB6">
 			Exploratory data analysis, often referred to simply as EDA, is one of the most important parts of any data science project, and in my opinion it is also one of the most fun. EDA is where our creativity comes into play: we familiarize ourselves with the data and come up with interesting questions in the process. We often discover things we did not expect. We have to write a lot of code and do a lot of Googling. In this post, I will attempt to outline the first few steps of the data science workflow, starting with a blank text editor and ending with a few questions and possible answers.
 		<br>
-			<img src=
-			"https://raw.githubusercontent.com/mjdaugherty/
-			mjdaugherty.github.io/master/images/imports.png"
+		The first step, as always, is our imports. For this project, we're going to need requests, time, numpy, pandas and matplotlib's pyplot module:
+		<img src=
+			"https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/imports.png"
 			alt="importing requests, time, numpy, pandas and
 			matplotlib.pyplot">
+		<br>
+		The next step is to prepare our data. Sometimes we will be provided with a nice clean csv or Excel spreadsheet to work with, but more often we'll have to collect and convert the data into a usable form all on our own. I'm going to do this with some good old-fashioned web scraping (with the help of <a href="https://ned.ipac.caltech.edu/Documents/Guides/Interface/ObjectLookup">The NASA/IPAC Extragalactic Database's excellent API</a>):
+		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/url.png" alt="requests.get('http://ned.ipac.caltech.edu/srs/ObjectLookup?name=ngc891'">
+		The above image shows how to use Python's requests library to make a request to an HTTP server, which is the first step in gathering data from the web. I first store the base URL that I will use for all of my queries in a variable called url. I then make a request to the server using the base URL and the query string "ngc891" and store it in another variable, res. Finally, I check the status code of the request to make sure it worked; 200 means the request was successful. This all could have been done in a single line of code and without creating any variables, but the reason for using them will become clear in a minute.
 		</font>
 	</body>
 </html>
