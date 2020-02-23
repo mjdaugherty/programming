@@ -75,7 +75,7 @@
 		<br>
 		I made a DataFrame called galaxies from a list called galaxies. Whoops. Anyway, here's what the column names mean:
 		<br>
-		name >> <a href="https://en.wikipedia.org/wiki/New_General_Catalogue">NGC number</a>
+		name >> <a href="https://en.wikipedia.org/wiki/New_General_Catalogue">NGC number</a> (or <a href="https://en.wikipedia.org/wiki/List_of_Messier_objects">Messier number</a>, if it has one)
 		<br>
 		ra >> <a href="https://en.wikipedia.org/wiki/Right_ascension">right ascension</a>
 		<br>
@@ -91,6 +91,9 @@
 		<br>
 		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies.png" alt="galaxies.head()">
 		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies2.png" alt="galaxies.describe()">
+		<br>
+		<br>
+		The values for right ascension range from 0 to 360, and those for declination range from -90 to 90; given how these numbers are defined, the values make sense. But there is at least one negative redshift value, which doesn't make sense, and we can see that some are missing entirely, so it would be wise to investigate those:
 		</font>
 	</body>
 </html>
