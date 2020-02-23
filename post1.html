@@ -93,7 +93,30 @@
 		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies2.png" alt="galaxies.describe()">
 		<br>
 		<br>
-		The values for right ascension range from 0 to 360, and those for declination range from -90 to 90; given how these numbers are defined, the values make sense. But there is at least one negative redshift value, which doesn't make sense, and we can see that some are missing entirely, so it would be wise to investigate those:
+		The values for right ascension range from 0 to 360, and those for declination range from -90 to 90; given how these numbers are defined, the values make sense. But we can see that there are some missing values, so I'm going to see how many there are:
+		<br>
+		<br>
+		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/nans.png" alt="57 missing z values and 104 missing +/- values">
+		<br>
+		<br>
+		What to do with null values is up to you. Since I'm just playing around here, I'm going to leave them alone, but if you're working on a real problem you will have to consider your options and deal with missing data appropriately.
+		<br>
+		<br>
+		Another thing worth noting is that there are negative redshift values:
+		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/negatives.png">
+		<br>
+		<br>
+		Redshift is the amount of change we observe in the wavelength of light emitted by objects that are moving relative to our frame of reference. The higher the redshift, the faster the relative motion. Negative values indicate that the object is moving toward us. I'm not familiar with every galaxy in the above image, but it includes eight Messier galaxies, which are relatively close to the Milky Way and so it isn't unreasonable to think that they are being pulled toward our galaxy by gravity. This is an example of how knowing a bit about the thing your data describe can help you decide what is a red flag and what isn't.
+		<br>
+		<br>
+		Now I'd like to check out the distributions of these galaxies' angular coordinates with some histograms.
+		<br>
+		<br>
+		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/dechist.png" alt="declination histogram">
+		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/rahist.png" alt="right ascension histogram">
+		<br>
+		<br>
+		The right ascension plot is very interesting. While the declination measurements appear to follow a nearly normal distribution centered just north of the celestial equator (a result of the location on Earth where the observations were made), the right ascension measurements show one high peak in the middle and two smaller ones at the ends. This is actually a bit deceptive because, right ascension being an angular measure, 0° and 360° are the same value, so the two peaks at the ends actually "wrap around" to meet each other. And so we have a bunch of galaxies spread over a patch of sky a little less than 100° wide - from, say, the eastern horizon up to the zenith. This is another instance where having a little knowledge about the data you're looking at can go a long way.
 		</font>
 	</body>
 </html>
