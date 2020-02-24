@@ -7,11 +7,13 @@
 		<meta name="author" content="Michael Daugherty">
 	</head>
 	<body bgcolor="#000000">
-		<font face="monospace" size="5" color="#BABDB6">Exploratory
-		Data Analysis from Scratch
-		<br>
-		<a href="mailto:mj.daugherty.73@gmail.com">Michael Daugherty</a>
- 	  </font>
+		<center>
+			<font face="monospace" size="6" color="#BABDB6">Exploratory Data Analysis from Scratch
+				<br>
+				<a href="mailto:mj.daugherty.73@gmail.com">Michael Daugherty
+				</a>
+			</font>
+		</center>
 		<br>
 		<br>
 		<font face="monospace" size="4" color="#BABDB6">
@@ -21,16 +23,20 @@
 		The first step, as always, is our imports. For this project, we're going to need requests, time, numpy, pandas and matplotlib's pyplot module:
 		<br>
 		<br>
+		<center>
 		<img src=
 			"https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/imports.png"
 			alt="importing requests, time, numpy, pandas and
-			matplotlib.pyplot">
+			matplotlib.pyplot" align="middle">
+		</center>
 		<br>
 		<br>
 		The next step is to get our data ready. Sometimes we will be provided with a nice clean csv or Excel spreadsheet that we can read in and start working on right away, but more often than not we'll have to collect and convert the data into a usable form all on our own. I'm going to collect some astronomical data using good old-fashioned web scraping (with the help of <a href="https://ned.ipac.caltech.edu/Documents/Guides/Interface/ObjectLookup">The NASA/IPAC Extragalactic Database's excellent API</a>):
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/url.png" alt="requests.get('http://ned.ipac.caltech.edu/srs/ObjectLookup?name=ngc891'">
+		<center>
+		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/url.png" alt="requests.get('http://ned.ipac.caltech.edu/srs/ObjectLookup?name=ngc891'" align="middle">
+	</center>
 		<br>
 		<br>
 		The above image shows how to use Python's requests library to make a request to an HTTP server, which is the first step in gathering data from the web. I first store the base URL that I will use for all of my queries in a variable called url. I then make a request to the server using the base URL and the query string "ngc891" and store the server's response in another variable, res. Finally, I check the status code of the response to make sure that the request was successful; <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">200</a> means we're good to go. This all could have been done in a single line of code and without creating any variables, but the reason for using them will become clear in a minute.
@@ -39,13 +45,17 @@
 		Now, I'm going to take that res variable and turn it into something I can use. Python has a built-in function that can turn a response object into a JSON object, which for our purposes we can safely consider the same as a dictionary. (In fact, if you check the type of a JSON-ified response object in Python, it is dict.) And since it is a dict, we can check out the keys:
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/resultcode.png" alt="keys: ['Copyright', 'QueryTime', 'Version', 'Preferred', 'Supplied', 'Interpreted', 'NameResolver', 'StatusCode', 'ResultCode']">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/resultcode.png" alt="keys: ['Copyright', 'QueryTime', 'Version', 'Preferred', 'Supplied', 'Interpreted', 'NameResolver', 'StatusCode', 'ResultCode']" align="middle">
+		</center>
 		<br>
 		<br>
 		I won't go into the details here, but after examining all of these keys (many of whose associated values were themselves dictionaries whose keys were attached to dictionaries which had keys pointing to dictionaries and...), I found which ones gave me the values I was after and put them in a loop.
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/scraping.png" alt="for loop to automate requests">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/scraping.png" alt="for loop to automate requests" align="middle">
+		</center>
 		<br>
 		<br>
 		#1: Create an empty list to hold my data entries.
@@ -73,7 +83,9 @@
 		Now, finally, I have my data in the form of a giant list of lists, which means I can turn it into a pandas DataFrame:
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/dataframe.png" alt="galaxies = pd.DataFrame(data=galaxies, columns=['name', 'ra', 'dec', 'z', '+/-']">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/dataframe.png" alt="galaxies = pd.DataFrame(data=galaxies, columns=['name', 'ra', 'dec', 'z', '+/-']" align="middle">
+		</center>
 		<br>
 		<br>
 		I made a DataFrame called galaxies from a list called galaxies. Not the best choice of variable names, but it'll work. Anyway, here's what the column names mean:
@@ -92,14 +104,18 @@
 		There are two pandas methods that I always like to run first when looking at new data, .head() and .describe(), which show the first five rows of a DataFrame and give a tidy summary of the data, respectively:
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies.png" alt="galaxies.head()">
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies2.png" alt="galaxies.describe()">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies.png" alt="galaxies.head()" align="middle">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/galaxies2.png" alt="galaxies.describe()" align="middle">
+		</center>
 		<br>
 		<br>
 		The values for right ascension range from 0 to 360, and those for declination range from -90 to 90; given how these numbers are defined, the values make sense. But we can see that there are some missing values, so I'm going to see how many there are:
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/nans.png" alt="57 missing z values and 104 missing +/- values">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/nans.png" alt="57 missing z values and 104 missing +/- values" align="middle">
+		</center>
 		<br>
 		<br>
 		What to do with null values is up to you. Since I'm just playing around here, I'm going to leave them alone, but if you're working on a real problem you will have to consider your options and deal with missing data appropriately.
@@ -108,7 +124,9 @@
 		Another thing worth noting is that there are negative redshift values:
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/negatives.png">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/negatives.png" align="middle">
+		</center>
 		<br>
 		<br>
 		Redshift is the amount of change we observe in the wavelength of light emitted by objects that are moving relative to our frame of reference. The higher the redshift, the faster the relative motion. Negative values indicate that the object is moving toward us. I'm not familiar with every galaxy in the above image, but it includes eight Messier galaxies, which are relatively close to the Milky Way and so it isn't unreasonable to think that they are being pulled toward our galaxy by gravity. This is an example of how knowing a bit about the thing your data describe can help you decide what is a red flag and what isn't.
@@ -117,8 +135,12 @@
 		Now I'd like to check out the distributions of these galaxies' angular coordinates with some histograms.
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/dechist.png" alt="declination histogram">
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/rahist.png" alt="right ascension histogram">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/dechist.png" alt="declination histogram" align="middle">
+		</center>
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/rahist.png" alt="right ascension histogram" align="middle">
+		</center>
 		<br>
 		<br>
 		The right ascension plot is very interesting. While the declination measurements appear to follow a nearly normal distribution centered just north of the celestial equator, the right ascension measurements show one high peak in the middle and two smaller ones at the ends. This is actually a bit deceptive because, right ascension being an angular measure, 0° and 360° are the same value, so the two peaks at the ends actually "wrap around" to meet each other. And so we have a ton of galaxies clustered up around 180° (12 hours) of right ascension as well as a bunch of galaxies spread over a patch of sky a little less than 100° wide - from, say, the eastern horizon up to the zenith. My guess is that the first group represents the <a href="https://en.wikipedia.org/wiki/Virgo_Cluster">Virgo Cluster</a>; a quick glance at some star charts seems to back up that supposition. I'm not sure about the other group, but it would be simple enough to find an explanation. This is another instance where having a little knowledge about the data you're looking at can go a long way.
@@ -127,7 +149,9 @@
 		I'll make a scatterplot of the coordinates too.
 		<br>
 		<br>
-		<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/scatter.png" alt="scatterplot of right ascension and decliation">
+		<center>
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/scatter.png" alt="scatterplot of right ascension and decliation" align="middle">
+		</center>
 		<br>
 		<br>
 		I'll be honest: I don't know why this plot looks the way it does, but I really like it. I was not expecting to see those black voids in there, so that's definitely something to investigate.
