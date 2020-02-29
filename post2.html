@@ -29,19 +29,19 @@
 			pwd: <u>p</u>rint <u>w</u>orking <u>d</u>irectory. Displays the absolute path to the directory (folder) in which you're currently working. This is really helpful when you get lost because you were in a hurry and gave crappy names to everything.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/pwd2.png" alt="pwd">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/pwd2.png" alt="pwd">
 			<br>
 			<br>
 			ls: <u>l</u>i<u>s</u>t. Prints a list of directories and files in the current working directory. By default it does <b>not</b> include hidden directories and files (these start with . on Linux systems), but by specifying -a you can show hidden items. -o prints the list sorted by the date they were modified. Finally, if you specify either a relative or absolute path to a directory, ls will list the contents of that directory rather than the current working directory.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/ls.png" alt="ls">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/ls.png" alt="ls">
 			<br>
 			<br>
 			cd: <u>c</u>hange <u>d</u>irectory. With no arguments it will take you to your home directory; otherwise, give it a relative path to the directory you want to go to. cd ../ will move you up one level, and you can go up several levels at a time this way. If you try to give it a path to a file (like ./index.html, where ./ means "in the current directory") you'll get an error. In the image below, I start in images and move up two levels and back down one into Downloads. If you type ls and hit tab twice, as with any Unix command, you'll get a list of options for arguments you can specify.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/cd.png" alt="cd">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/cd.png" alt="cd">
 			<br>
 			<br>
 			<b>Manipulating directories and files</b>
@@ -50,37 +50,37 @@
 			touch: Create a file or files in the current working directory. To create several files, list them separated by spaces.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/touch.png" alt="touch">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/touch.png" alt="touch">
 			<br>
 			<br>
 			rm: <u>r</u>e<u>m</u>ove. Remove files. <b>By default, you won't get a prompt asking if you're sure you want to remove the file before going through with it, so make sure you have the right one.</b> You can use -i to give you a prompt, but since it will just repeat the names of the files you just typed, it may not be very useful. You can use rm on directories too (see the entry for rmdir below).
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/rm.png" alt="rm">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/rm.png" alt="rm">
 			<br>
 			<br>
 			mkdir: <u>m</u>a<u>k</u>e <u>dir</u>ectory. Create a new empty directory or directories; analogous to touch. You can create a new directory and cd into it in one line using a semicolon (you can always execute multiple commands at once with this method).
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/mkdir.png" alt="mkdir">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/mkdir.png" alt="mkdir">
 			<br>
 			<br>
 			rmdir: <u>r</u>e<u>m</u>ove <u>dir</u>ectory. If there's anything in it, you will need to use rm -rf instead. You can remove several empty and non-empty directories together this way. This can be dangerous for obvious reasons, so make sure there's nothing in any of them that you need beforehand.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/rmdir.png" alt="rmdir">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/rmdir.png" alt="rmdir">
 			<br>
 			<br>
 			mv: <u>m</u>o<u>v</u>e. Use mv to move a file or a directory to a new location. It will work even if the directory you're trying to move isn't empty, which will break any code that uses the old path to that directory.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/mv.png" alt="mv">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/mv.png" alt="mv">
 			<br>
 			<br>
 			cp: <u>c</u>o<u>p</u>y. Similar to mv except that the file you're copying is now in its original location as well as the location specified. Can be used to copy directories too, using -r.
 			<br>
 			<br>
-			<img src="/home/mike/mjdaugherty.github.io/images/cp.png" alt="cp">
+			<img src="https://raw.githubusercontent.com/mjdaugherty/mjdaugherty.github.io/master/images/cp.png" alt="cp">
 			<br>
 			<br>
 			<b>Other handy commands, notes</b>
