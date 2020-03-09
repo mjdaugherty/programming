@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Predicting Galaxy Redshifts from Magnitude Measurements
+    </title>
+		<meta name="description" content="This is a blog post.">
+		<meta name="author" content="Michael Daugherty">
+	</head>
+	<body bgcolor="#000000">
+		<center>
+			<font face="monospace" size="6" color="#BABDB6">Predicting Galaxy Redshifts from Magnitude Measurements
+				<br>
+				<a href="mailto:mj.daugherty.73@gmail.com">Michael Daugherty
+				</a>
+			</font>
+		</center>
+    <br>
+    <br>
+    <font face="monospace" size="4" color="#BABDB6">
+		This post is something of a followup to <a href="https://mjdaugherty.github.io/post1.html">this one</a>, where I collected angular coordinates and redshifts for a bunch of galaxies and did a little bit of cleaning and plotting and not much else. This time I'll be working with a more extensive dataset with a few more features and more than 10 times as many entries. I'm going to fit a bunch of models and see if I can make any useful predictions, and maybe use some visuals to compare the actual (measured) redshift values to those spat out by the best of my models. Probably not, but the point here is to provide a quick reference for fitting and evaluating simple machine learning models.
+		<br>
+		<br>
+		<b>Data Collection</b>
+		<br>
+		The data I'm going to use come from the <a href="https://www.sdss.org/">Sloan Digital Sky Survey</a>. This is an amazing astronomy resource, not only because of the volume of data available to the public, but also because they provide tools for browsing and downloading what you need. One such tool is a <a href="http://skyserver.sdss.org/dr16/en/tools/search/sql.aspx">SQL interface</a> that allows you to write custom queries that can be as specific as you want. I'm not an expert on the SDSS databases or SQL, so I just modified the example query a bit to grab what I wanted.
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/sqlsearch.png" alt="SQL query">
+		<br>
+		<br>
+		Instead of saving the CSV and trying to work with it as-is, it is easier to open it in a text editor and modify it a bit first.
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/opencsv.png" alt="open, don't save">
+		<br>
+		<br>
+		I took out the first line, "#Table1", and saved it to a new file. Opening a file with 100k lines in a text editor isn't an elegant approach, but it works.
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/editcsv.png" alt="remove #Table1 line">
+		<br>
+		<br>
+		<b>Imports, EDA, cleaning</b>
+		<pre>
+			<code><font color="#0D86EA"><b>
+import numpy as np, pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns</b></font></code>
+		</pre>
+		<i>Note</i>: I'm going to skip the code for routine tasks like reading in and displaying tables.
+		<br>
+		Here's what the first few entries of the SDSS data look like:
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/csvhead.png", alt="head of csv">
+		<br>
+		<br>
+		objid: database ID
+		<br>
+		ra: right ascension
+		<br>
+		dec: declination
+		<br>
+		u: <a href="https://en.wikipedia.org/wiki/Apparent_magnitude">apparent magnitude</a> with 365 nm midpoint filter (ultraviolet)
+		<br>
+		g: app. mag. at 464 nm (green)
+		<br>
+		r: 658 nm (red)
+		<br>
+		i: 806 nm (near-infrared)
+		<br>
+		z: 900 nm (near-infrared)
+		<br>
+		<br>
+		The objid column isn't needed; it would have been wise to exclude it from my SQL query, but at this point it will be quicker to drop it or convert it to a string. I chose to drop it.
+		<br>
+		<br>
+		A problem with this dataset is that there some measurements for the 5 magnitudes and the redshift which I'm guessing are placeholders for missing measurements. There are no actual null values so I had to look at some scatterplots to find these. The placeholder values are -9999.0 for the magnitudes and 0 for the redshift. I threw those rows out with the following code:
+		<pre>
+			<code><font color="#OD86EA"><b>
+data = data[
+(data["u"] != -9999.0) &
+(data["g"] != -9999.0) &
+(data["r"] != -9999.0) &
+(data["i"] != -9999.0) &
+(data["z"] != -9999.0) &
+(data["redshift"] != 0)
+]</b></font></code>
+    </pre>
+<b>Modeling, Evaluation</b>
+<br>
+<br>
+Now, we finally have clean data and can do some modeling. The first thing to do is set up our feature matrix and target vector, consisting of the independent and dependent variables, respectively. Next, a train-test split to get a set for training models and a set for evaluating them.
+<pre>
+	<code><font color="#OD86EA"><b>
+features = ["u", "g", "r", "i", "z"]
+X = data[features]
+y = data["redshift"]
+X_train, X_test, y_train, y_test = train_test_split(X, y)</b></font></code>
+</pre>
+I'll start with good old linear regression. It will probably be useless, but I wouldn't be shocked by an r<sup>2</sup> score over 50%. Redshift increases with distance, apparent magnitude across the EM spectrum decreases with distance. So a multiple linear regression might not be terrible.
+<pre>
+	<code><font color="#OD86EA"><b>
+lr = LinearRegression()
+lr.fit(X_train, y_train);
+print(cross_val_score(lr, X_train, y_train).mean())
+print(cross_val_score(lr, X_test, y_test).mean())
+</b></font>
+Training: 0.8353465411473102
+Testing: 0.8364729925043258</code>
+</pre>
+Actually, I am shocked. This is a great result considering that I've done nothing to the data. It even scored slightly higher on the test set than the training set. Still, let's see if we can do better with a k-nearest neighbors model. Since this algorithm relies on finding distances between points in the space defined by the features of a dataset, the features must be on the same scale or the model will be useless. This can be accomplished using <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html">sklearn.preprocessing.StandardScaler</a>.
+<pre>
+<code><font color="#OD86EA"><b>
+scaler = StandardScaler()
+X_train_sc = scaler.fit_transform(X_train)
+X_test_sc = scaler.transform(X_test)</b></font><code>
+</pre>
+<pre>
+	<code><font color="#OD86EA"><b>
+knn = KNeighborsRegressor()
+knn.fit(X_train_sc, y_train);
+print(cross_val_score(knn, X_train_sc, y_train).mean())
+print(cross_val_score(knn, X_test_sc, y_test).mean())
+</b></font>
+Training: 0.8650477060517643
+Testing: 0.8563146123172001</code>
+</pre>
+Not bad! It might be worth trying out KNN models with a few different values of k, the number of closest points the algorithm looks for for each data point. Generally you'll want to use a gridsearch for tuning over hyperparameters to find the best model, but since I'm only changing one here I'm just going to put everything in a loop.
+<pre>
+	<code><font color="#OD86EA"><b>
+for k in range(1, 20):
+    knn = KNeighborsRegressor(n_neighbors=k)
+    knn.fit(X_train_sc, y_train);
+    print(f"k={}k")
+    print(cross_val_score(knn, X_train_sc, y_train).mean())
+    print(cross_val_score(knn, X_test_sc, y_test).mean())
+    print()</b></font></code>
+	</pre>
+The scores were all pretty similar for all values of n, 86-87% on both training and testing. The default of 5 is fine. How about a more complicated model?
+<br>
+<br>
+<b>Gridsearching over multiple hypterparameters</b>
+<br>
+<br>
+The last model I'm going to try is a random forest regressor. There are lots of options here. I'm only going to mess with two because I don't want to leave my laptop open all night to run through dozens of models. I'm going to tune over max_depth and boostrap. Check out the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">documentation</a> for explanations of the many hyperparameters for the random forest regressor.
+<br>
+When performing a gridsearch, the first step is to instantiate your model (called an estimator in this context). The next step is to set up the dictionary of hyperparameters and their values to tune over. Then you instantiate the gridsearch with the chosen estimator and parameter grid. Finally, you fit the gridsearch instance to your data like any other sklearn model. It's tricky at first, but once you get the hang of it gridsearching is extremely useful.
+<pre>
+	<code><font color="OD86EA"><b>
+rfr = RandomForestRegressor()
+
+params = {
+    "max_depth": [5, 10],
+    "bootstrap": [True, False]
+}
+
+gs = GridSearchCV(
+    estimator=rfr,
+    param_grid=params,
+		n_jobs=4
+)
+
+gs.fit(X_train_sc, y_train);</b></font></code>
+</pre>
+The n_jobs inside the gridsearch is important. If you have a few processor cores to spare, letting them run your gridsearch in parallel will speed up the process a lot. In this example I only fit 4 models (2 values of max_depth * two values of bootstrap) and it still took about a minute using 4 cores. This is a consequence of having a lot of data (by Jupyter notebook and sklearn standards). And what were my results?
+<pre>
+	<code><font color="#OD86EA"><b>
+print(gs.best_estimator_.score(X_train_sc, y_train))
+print(gs.best_estimator_.score(X_test_sc, y_test))
+</b></font>
+Training: 0.9106568583078309
+Testing: 0.8852787055395247
+</code>
+</pre>
+A little better on training than testing, which suggests some overfitting, but not enough to throw the model out, and I still would say it's the best of all of the ones I tested. Note that I didn't use cross_val_score to get these scores: the gridsearch uses cross validation to determine the best model (gs.best_estimator_), so another cross validation would seem redundant to me. And we can also extract the hyperparameters that gave the best results:
+<pre>
+	<code><font color="#OD86EA"><b>
+gs.best_params_
+</b></font>
+{'bootstrap': True, 'max_depth': 10}
+</code>
+</pre>
+For a real project, you would want to do a more extensive gridsearch, and then create a new model using the best hyperparameters which you would use to do all kinds of interesting things, but for now I'm just going to check out the scatterplot of the actual redshift values in the test set vs. the predictions from my model:
+<pre>
+	<code><font color="#OD86EA"><b>
+model = gs.best_estimator_
+y_hat = model.predict(X_test_sc)
+
+plt.figure(figsize=(10,10))
+plt.rcParams["axes.facecolor"] = "black"
+plt.rcParams["figure.facecolor"] = "black"
+plt.xticks(color="#BABDB6")
+plt.yticks(color="#BABDB6")
+plt.scatter(data["ra"], data["dec"], color="white")
+plt.title("RA (x), dec (y)", fontsize=14, color="#BABDB6");
+</b></font></code>
+</pre>
+<img src="https://mjdaugherty.github.io/images/errors.png" alt="predictions vs. real redshifts">
+<br>
+<br>
+<b>Conclusion</b>
+<br>
+<br>
+There are a few points to take away from this post, which ended up being much longer than I planned (again).
+<br>
+1: Start simple. Unless you know enough about your data to say confidently that a very simple model won't make good predictions, fit one. Fit several. It doesn't take very long.
+<br>
+2: Try lots of models. You may be surprised which ones give good results and which ones bite it.
+<br>
+3: Know what you're trying to do and how good is good enough. For this problem, I'm quite happy with a 90% r<sup>2</sup> score, even though my scatterplot doesn't look so hot.
+<br>
+<br>
+That's all I've got. Thanks for reading.
+  </body>
+</html>
+    
+     
