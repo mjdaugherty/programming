@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Mapping Galaxies Using Redshift Measurements
+    </title>
+		<meta name="description" content="This is a blog post.">
+		<meta name="author" content="Michael Daugherty">
+	</head>
+	<body bgcolor="#000000">
+		<center>
+			<font face="monospace" size="6" color="#BABDB6">Mapping Galaxies Using Redshift Measurements
+				<br>
+				<a href="mailto:mj.daugherty.73@gmail.com">Michael Daugherty
+				</a>
+			</font>
+		</center>
+    <br>
+    <br>
+    <font face="monospace" size="4" color="#BABDB6">
+		In this post, I'm going to document the steps I followed to create a 3D plot of the galaxies from <a href="https://mjdaugherty.github.io/post3.html">this dataset</a> using their right ascension, declination and redshift. This is not an attempt to solve a problem; it is simply an interesting way of visualizing scientific measurements that can seem abstract and difficult to conceptualize. There is some cool math involved and some use of Linux utilities as well as the usual Python toolset.
+		<br>
+		<br>
+    The basic procedure is as follows:
+		<br>
+    <br>
+    1. Obtain distance estimates from redshift measurements using the relation
+		<br>
+		<b>D ~ c/H0 * [(z-1)
+		<br>
+
+		<br>
+		where z is redshift, v is recession velocity and c is the speed of light. (I used <a href="https://www.wolframalpha.com/input/?i=solve+z+%3D+sqrt%28%281%2Bv%2Fc%29%2F%281-v%2Fc%29%29+for+v">Wolfram Alpha</a> for this.)
+    <br>
+		<br>
+    2. Estimate distance to the galaxy by rearranging
+		<br>
+		<br>
+		<img src="file:///home/mike/mjdaugherty.github.io/images/velocity.png" align="left" alt="velocity formula">
+		<br>
+		<br>
+		<br>
+
+		where H<sub>0</sub> is the <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/Astro/hubble.html">Hubble parameter</a>.
+		<br>
+		<br>
+		3. Transform the right ascension and declination to correspond to phi and theta, respectively, in <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a> and convert them to radians.
+		<br>
+		<br>
+		4. Convert these values to Cartesian (x, y, z) coordinates.
+		<br>
+		<br>
+		I decided to limit the galaxies to those with a redshift of less than 0.1, which corresponds to a distance of less than about 1 billion light years. This was done for two reasons: 1. the simple distance formula above breaks down at larger redshifts; 2. the number of galaxies is reduced to around 16,000 instead of several times that number, which makes plotting go more smoothly.
+		<br>
+		<br>
+		

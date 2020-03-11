@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Plotting Galaxies by Angular Coordinates and Redshift
+    </title>
+		<meta name="description" content="This is a blog post.">
+		<meta name="author" content="Michael Daugherty">
+	</head>
+	<body bgcolor="#000000">
+		<center>
+			<font face="monospace" size="6" color="#BABDB6">Plotting Galaxies by Angular Coordinates and Redshifts
+				<br>
+				<a href="mailto:mj.daugherty.73@gmail.com">Michael Daugherty
+				</a>
+			</font>
+		</center>
+    <br>
+    <br>
+    <font face="monospace" size="4" color="#BABDB6">
+			In this post I'm going to create a 3D plot of nearby galaxies using their angular coordinates and redshifts. This is just a fun diversion with no scientific value; astronomers use much more sophisticated methods and more parameters to determine how galaxies are actually distributed through space. Check out <a href="https://arxiv.org/pdf/astro-ph/0402362.pdf">this paper</a> if you're interested in learning more, but be warned, it's not for the faint of heart. I don't quite understand the methods that were used and I'm sure they have evolved significantly since the paper was published in 2004.
+		<br>
+		<br>
+		<b>The data</b>
+		<br>
+		<br>
+		I'm going to use a subset of the dataset from <a href="https://mjdaugherty.github.io/post3.html">this post</a> with redshifts limited to <= 0.1. This smaller set consists of about 16,000 galaxies. I named the DataFrame created from these data nearby_galaxies.
+		<br>
+		<br>
+		<b>The software</b>
+		<br>
+		<br>
+		I'll use Python for this project. More specifically, the necessary imports are:
+		<pre>
+			<code><font color="#0D86EA"><b>
+import numpy as np, pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN</b></font></code>
+		</pre>
+		I'm also going to use gnuplot, a basic Linux graphing utility. The same thing can be accomplished using pure Python, but gnuplot is what I'm used to so it's my go-to for 3D plots.
+		<br>
+		<br>
+		<b>The process</b>
+		<br>
+		<br>
+		The first step is to transform the right ascension and declination to the same scale as the <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinate system</a>. Right ascension just needs to be converted to radians, but the transformation of declination is a bit more complex. Declination ranges from -90° at the south celestial pole to 90° at the north, while θ, its counterpart in spherical coordinates, is measured downward from vertical, so it ranges from 0° to 180° (0 to π in radians).
+		<pre>
+			<code><font color="#0D86EA"><b>
+nearby_galaxies["phi"] = nearby_galaxies["ra"] / (180/np.pi)
+nearby_galaxies["theta"] = (nearby_galaxies["dec"] + 90) / (180/np.pi)</b></font></code>
+		</pre>
+		This code will throw a SettingWithCopyWarning, but it can be safely ignored, as in 98.8% of all cases where this happens.
+		<br>
+		<br>
+		The distance to a galaxy can be estimated using the formula
+		<br>
+		<i>c * z = H_0 * d</i>
+		<br>
+		where c is the speed of light in km/s, z is the redshift (no units), H_0 is the Hubble parameter (estimated around 70 km/s) and d is distance:
+		<pre>
+			<code><font color="#0D86EA"><b>
+nearby_galaxies["rho"] = c / H_0 * nearby_galaxies["redshift"]</b></font></code>
+		</pre>
+		Now, with the position of each galaxy specified in spherical coordinates, we can obtain the positions in Cartesian coordinates with a bit of trigonometry:
+		<pre>
+		  <code><font color="#0D86EA"><b>
+nearby_galaxies["x1"] = nearby_galaxies["rho"] * np.sin(nearby_galaxies["theta"]) * np.cos(nearby_galaxies["phi"])
+nearby_galaxies["x2"] = nearby_galaxies["rho"] * np.sin(nearby_galaxies["theta"]) * np.sin(nearby_galaxies["phi"])
+nearby_galaxies["x3"] = nearby_galaxies["rho"] * np.cos(nearby_galaxies["theta"])</b></font></code>
+    </pre>
+		Now, to write these coordinates to a file that gnuplot can use to generate a plot.
+		<pre>
+			<code><font color="#0D86EA"><b>
+with open("coords.dat", "w") as fp:
+    for row in nearby_galaxies.index:
+        fp.write(str(nearby_galaxies["x1"][row]) + str(nearby_galaxies["x2"][row]) + str(nearby_galaxies["x3"][row]) + "\n")</b></font></code>
+		</pre>
+		Finally, with coordinates in hand, it's time to open gnuplot and generate our beautiful plot.
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/gnuplot.png" alt="gnuplot; splot 'coords.dat' pointtype 3">
+		<br>
+		<br>
+		<b>The result</b>
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/galaxyplot.png" alt="galaxy plot">
+		<br>
+		<br>
+		Not too pretty, but it is fun to make 3D plots like this and move them around and look at them from different angles. It's the equivalent of 3 scatterplots in one. Note that in this plot, Earth is at (0, 0, 0), which is not dead center; there are also areas with no galaxies present, which doesn't actually have anything to do with the real distribution but rather what parts of the sky have not yet been covered by the survey from which the data were collected. No tidy summary here, I'm afraid. Thanks for reading.
