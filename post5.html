@@ -2,14 +2,14 @@
 
 <html>
 	<head>
-		<title>Mapping Galaxies Using Redshift Measurements
+		<title>A Comparison of Python and C
     </title>
 		<meta name="description" content="This is a blog post.">
 		<meta name="author" content="Michael Daugherty">
 	</head>
 	<body bgcolor="#000000">
 		<center>
-			<font face="monospace" size="6" color="#BABDB6">Mapping Galaxies Using Redshift Measurements
+			<font face="monospace" size="6" color="#BABDB6">A Comparison of Python and C
 				<br>
 				<a href="mailto:mj.daugherty.73@gmail.com">Michael Daugherty
 				</a>
@@ -18,39 +18,52 @@
     <br>
     <br>
     <font face="monospace" size="4" color="#BABDB6">
-		In this post, I'm going to document the steps I followed to create a 3D plot of the galaxies from <a href="https://mjdaugherty.github.io/post3.html">this dataset</a> using their right ascension, declination and redshift. This is not an attempt to solve a problem; it is simply an interesting way of visualizing scientific measurements that can seem abstract and difficult to conceptualize. There is some cool math involved and some use of Linux utilities as well as the usual Python toolset.
+			This post will be a bit less technical than some of the previous ones. I'm also going to expose my ignorance about programming languages. I'm no expert, but I do have a bit of experience with scientific computing using tools that are significantly less friendly to the beginning programmer than those commonly used in data science, which has given me a deep appreciation for Python and the tools commonly used with it.
 		<br>
 		<br>
-    The basic procedure is as follows:
-		<br>
-    <br>
-    1. Obtain distance estimates from redshift measurements using the relation
-		<br>
-		<b>D ~ c/H0 * [(z-1)
-		<br>
-
-		<br>
-		where z is redshift, v is recession velocity and c is the speed of light. (I used <a href="https://www.wolframalpha.com/input/?i=solve+z+%3D+sqrt%28%281%2Bv%2Fc%29%2F%281-v%2Fc%29%29+for+v">Wolfram Alpha</a> for this.)
-    <br>
-		<br>
-    2. Estimate distance to the galaxy by rearranging
+		The first programming language I learned was C; that was 8 years ago, when I was in college. It was the first time I had attempted anything more complex than making a website hosted on Tripod with about 50 lines of HTML. The class was called Introduction to Scientific Computing. It was quite an introduction.
 		<br>
 		<br>
-		<img src="file:///home/mike/mjdaugherty.github.io/images/velocity.png" align="left" alt="velocity formula">
+		Here's a simple program written in C which prints "hello world" to the terminal:
 		<br>
 		<br>
-		<br>
-
-		where H<sub>0</sub> is the <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/Astro/hubble.html">Hubble parameter</a>.
+		<img src="https://mjdaugherty.github.io/images/hello_c.png" alt="hello world in C">
 		<br>
 		<br>
-		3. Transform the right ascension and declination to correspond to phi and theta, respectively, in <a href="https://en.wikipedia.org/wiki/Spherical_coordinate_system">spherical coordinates</a> and convert them to radians.
+		To run it actually requires two commands:
 		<br>
 		<br>
-		4. Convert these values to Cartesian (x, y, z) coordinates.
+		<img src="https://mjdaugherty.github.io/images/compile.png" alt="compiling test.c">
 		<br>
 		<br>
-		I decided to limit the galaxies to those with a redshift of less than 0.1, which corresponds to a distance of less than about 1 billion light years. This was done for two reasons: 1. the simple distance formula above breaks down at larger redshifts; 2. the number of galaxies is reduced to around 16,000 instead of several times that number, which makes plotting go more smoothly.
+		The first command runs GCC, which compiles the C code in the file test.c into an executable, test, which is run with ./test. This is really simple on Unix-based systems, but Windows requires a C environment in order to compile and execute C code. Here's the same "hello world" program in Python:
 		<br>
 		<br>
-		
+		<img src="https://mjdaugherty.github.io/images/hello_python.png" alt="hello world in python">
+		<br>
+		<br>
+		This is a simple example, but it highlights one of the crucial differences between so-called scripting languages like Python and "old school" languages like C: Python is an interpreted language, which means you can write a line of code and execute it immediately with just a press of the return key, whereas C is compiled, meaning you have to save your code in a .c file, compile it and only then can execute it. Compiled languages tend to be much faster, which can be important when dealing with huge quantities of data or doing strenuous physics calculations, but interpeted languages tend to be a lot more convenient for tasks where you're experimenting, running code and checking the results and trying something different and fixing mistakes along the way - like exploratory data analysis.
+		<br>
+		<br>
+		Another major difference between C and Python is the huge number of Python libraries and other tools to facilitate any task you can think of. Every data scientist is familiar with <a href="https://pandas.pydata.org/">pandas</a>; running code and tweaking it on the fly is easy with <a href="https://jupyter.org/">Jupyter notebooks</a>; and many of the common machine learning algorithms take no time to implement using <a href="https://scikit-learn.org/stable/index.html">scikit-learn</a> and <a href="https://www.statsmodels.org/stable/index.html">. Here's an example, reading in a CSV file using pandas:
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/pandas.png" alt="pandas">
+		<br>
+		<br>
+		I would show the same operation in C, but I have no idea where to start. Instead here's a question on Stack Overflow about opening a CSV file with C: <a href="https://stackoverflow.com/questions/12911299/read-csv-file-in-c">https://stackoverflow.com/questions/12911299/read-csv-file-in-c</a>
+		<br>
+		<br>
+		The big advantage that C and other compiled languages (C++, Java, FORTRAN) have over interpreted languages (Python, Ruby, JavaScript) is speed. A lot of Python libraries are in fact wrappers that allow Python to call functions implemented using C. Some of the performance-critical parts of pandas are written in C, for example. Here's a Python script to write tests of the <a href="https://en.wikipedia.org/wiki/Collatz_conjecture">Collatz conjecture</a> to a .dat file up to 100,000:
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/collatz_py.png" alt="Collatz conjecture in Python">
+		<br>
+		<br>
+		That script took 1.574 seconds to run on my machine. The plot made from the .dat file looks like this:
+		<br>
+		<br>
+		<img src="https://mjdaugherty.github.io/images/collatzplot.png" alt="collatz plot">
+		<br>
+		<br>
+		I tried to implement the same program in C, but my skills are very rusty at this point and my code produced a program that only ran about half the time, so I can't compare them. The Collatz conjecture is still really cool and is worth reading about and trying out in different programming languages, but I'm getting off topic now so I'll just end it here. Thanks for reading.
