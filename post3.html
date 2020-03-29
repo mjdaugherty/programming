@@ -2,17 +2,28 @@
 
 <html>
 	<head>
+		<style>
+			a:link {
+			color: #00D0EE;
+			text-decoration: none;
+			}
+			a:visited {
+			color: #00D0EE;
+			text-decoration: none;
+			}
+			a:hover {
+			color: #00D0EE;
+			text-decoration: underline;
+			}
+		</style>
 		<title>Predicting Galaxy Redshifts from Magnitude Measurements
     </title>
-		<meta name="description" content="This is a blog post.">
+		<meta name="description" content="Data collection, cleaning and modeling">
 		<meta name="author" content="Michael Daugherty">
 	</head>
 	<body bgcolor="#000000">
 		<center>
 			<font face="monospace" size="6" color="#BABDB6">Predicting Galaxy Redshifts from Magnitude Measurements
-				<br>
-				<a href="mailto:m.j.daugherty0@gmail.com">Michael Daugherty
-				</a>
 			</font>
 		</center>
     <br>
@@ -22,6 +33,7 @@
 		<br>
 		<br>
 		<b>Data Collection</b>
+		<br>
 		<br>
 		The data I'm going to use come from the <a href="https://www.sdss.org/">Sloan Digital Sky Survey</a>. This is an amazing astronomy resource, not only because of the volume of data available to the public, but also because they provide tools for browsing and downloading what you need. One such tool is a <a href="http://skyserver.sdss.org/dr16/en/tools/search/sql.aspx">SQL interface</a> that allows you to write custom queries that can be as specific as you want. I'm not an expert on the SDSS databases or SQL, so I just modified the example query a bit to grab what I wanted.
 		<br>
